@@ -120,8 +120,9 @@
     <div class="main-container">
         <a href="/" class="logo">Goo-Shu</a>
 
+        <!-- Slot Iklan Atas (Bisa diisi unit iklan lain nanti) -->
         <div class="ad-container">
-            <div id="container-557341906a419e06b24b930f8ed87f2a">
+            <div id="ad-top">
                 <small style="color:#333">Advertisement</small>
             </div>
         </div>
@@ -130,9 +131,11 @@
             <div class="no-video" id="status-msg">Memuat video...</div>
         </div>
 
+        <!-- Slot Iklan Bawah (Unit Adsterra dipasang di sini) -->
         <div class="ad-container">
-            <div id="container-557341906a419e06b24b930f8ed87f2a">
-                <small style="color:#333">Advertisement</small>
+            <div id="ad-bottom">
+                <!-- KODE DIV ADSTERRA ANDA -->
+                <div id="container-557341906a419e06b24b930f8ed87f2a"></div>
             </div>
         </div>
 
@@ -148,8 +151,8 @@
 
     <footer>&copy; 2024-2026 goo-Shu.</footer>
 
+    <!-- Script Video Player Logic -->
     <script>
-        // Fungsi mengambil parameter "v" dari URL
         function getQueryParam(param) {
             const urlParams = new URLSearchParams(window.location.search);
             return urlParams.get(param);
@@ -161,19 +164,14 @@
 
         if (videoUrl) {
             let embedHtml = '';
-            
-            // Logika deteksi sumber
             if (videoUrl.includes('youtube.com') || videoUrl.includes('youtu.be')) {
                 let id = videoUrl.includes('v=') ? videoUrl.split('v=')[1].split('&')[0] : videoUrl.split('/').pop();
                 embedHtml = `<iframe src="https://www.youtube.com/embed/${id}?autoplay=1" allowfullscreen allow="autoplay"></iframe>`;
             } else {
-                // Default sebagai video MP4 langsung (Videy atau direct link)
                 embedHtml = `<video controls autoplay><source src="${videoUrl}" type="video/mp4">Browser anda tidak mendukung video.</video>`;
             }
-
             playerArea.innerHTML = `<div class="video-wrapper">${embedHtml}</div>`;
         } else {
-            // Jika tidak ada parameter v=, tampilkan form buat link
             document.getElementById('status-msg').style.display = 'none';
             generator.style.display = 'block';
         }
@@ -187,5 +185,9 @@
             }
         }
     </script>
+
+    <!-- SCRIPT IKLAN ADSTERRA ANDA (Diletakkan di bawah agar loading cepat) -->
+    <script async="async" data-cfasync="false" src="https://pl29428652.profitablecpmratenetwork.com/557341906a419e06b24b930f8ed87f2a/invoke.js"></script>
+
 </body>
 </html>
