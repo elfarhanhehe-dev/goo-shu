@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Goo-Szhu | Minimalist Video Player</title>
+    <!-- Font Inter (Apple Style) -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #ffffff;
+            --accent: #007aff; /* Apple Blue */
+            --text-main: #1d1d1f;
+            --text-sub: #86868b;
+            --border: #d2d2d7;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, sans-serif;
+            background-color: var(--bg);
+            color: var(--text-main);
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* Top Left Branding */
+        header {
+            padding: 20px 40px;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+
+        .logo {
+            font-size: 1.2rem;
+            font-weight: 600;
+            text-decoration: none;
+            color: var(--text-main);
+            letter-spacing: -0.5px;
+        }
+
+        /* Container Utama */
+        .container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        /* Generator Box */
+        .card {
+            width: 100%;
+            background: #ffffff;
+            border-radius: 18px;
+            padding: 30px;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.04);
+            border: 1px solid #f2f2f2;
+            text-align: center;
+        }
+
+        h1 { font-size: 24px; margin-bottom: 10px; }
+        p { color: var(--text-sub); margin-bottom: 25px; }
+
+        .input-group {
+            display: flex;
+            gap: 10px;
+            background: #f5f5f7;
+            padding: 8px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+        }
+
+        input {
+            flex: 1;
+            border: none;
+            background: transparent;
+            padding: 12px;
+            font-size: 16px;
+            outline: none;
+            color: var(--text-main);
+        }
+
+        button {
+            background: var(--accent);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+
+        button:hover { opacity: 0.8; }
+
+        /* Video Area */
+        .video-box {
+            width: 100%;
+            aspect-ratio: 16/9;
+            background: #000;
+            border-radius: 14px;
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+
+        video, iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        .share-result {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f5f5f7;
+            border-radius: 10px;
+            font-size: 14px;
+            word-break: break-all;
+            display: none;
+            border: 1px dashed var(--accent);
+        }
+
+        /* Slot Iklan */
+        .ad-slot {
+            margin: 20px 0;
+            min-height: 90px;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        footer {
+            padding: 20px;
+            text-align: center;
+            font-size: 12px;
+            color: var(--text-sub);
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <a href="/" class="logo">Goo-Szhu</a>
+    </header>
+
+    <div class="container">
+        
+        <!-- Slot Iklan Atas -->
+        <div class="ad-slot">
+            <small style="color:#ccc">ADVERTISEMENT</small>
+        </div>
+
+        <!-- Area Player (Muncul jika ada link) -->
+        <div id="player-section" style="display:none; width: 100%;">
+            <div class="video-box" id="media-container"></div>
+            <div style="margin-top: 15px; text-align: center;">
+                <button onclick="location.href='/'" style="background:#eee; color:#333;">Buat Link Baru</button>
+            </div>
+        </div>
+
+        <!-- Area Generator (Muncul di Homepage) -->
+        <div id="generator-section" class="card">
+            <h1>Video Generator</h1>
+            <p>Masukkan link video (Direct MP4/Videy/YT) untuk mendapatkan link share otomatis.</p>
+            
+            <div class="input-group">
+                <input type="text" id="videoInput" placeholder="Tempel link video di sini...">
+                <button onclick="generate()">Generate</button>
+            </div>
+
+            <div id="result" class="share-result"></div>
+        </div>
+
+        <!-- Slot Iklan Bawah (Adsterra) -->
+        <div class="ad-slot">
+            <div id="container-557341906a419e06b24b930f8ed87f2a"></div>
+        </div>
+
+    </div>
+
+    <footer>&copy; 2026 Goo-Szhu Project. All rights reserved.</footer>
+
+    <script>
+        // 1. Logika Ambil Parameter URL
+        const params = new URLSearchParams(window.location.search);
+        const videoUrl = params.get('v');
+
+        if (videoUrl) {
+            // Sembunyikan generator, tampilkan player
+            document.getElementById('generator-section').style.display = 'none';
+            document.getElementById('player-section').style.display = 'block';
+            
+            const container = document.getElementById('media-container');
+            
+            if (videoUrl.includes('youtube.com') || videoUrl.includes('youtu.be')) {
+                // Jika YouTube
+                let id = videoUrl.includes('v=') ? videoUrl.split('v=')[1].split('&')[0] : videoUrl.split('/').pop();
+                container.innerHTML = `<iframe src="https://www.youtube.com/embed/${id}?autoplay=1" allowfullscreen allow="autoplay"></iframe>`;
+            } else {
+                // Jika Direct Link (Videy, dsb)
+                container.innerHTML = `<video controls autoplay><source src="${videoUrl}" type="video/mp4">Browser tidak mendukung.</video>`;
+            }
+        }
+
+        // 2. Logika Generate Link
+        function generate() {
+            const input = document.getElementById('videoInput').value.trim();
+            const resultBox = document.getElementById('result');
+            
+            if (input) {
+                const currentUrl = window.location.href.split('?')[0];
+                const finalLink = `${currentUrl}?v=${encodeURIComponent(input)}`;
+                
+                resultBox.style.display = 'block';
+                resultBox.innerHTML = `<strong>Link Siap Bagikan:</strong><br>${finalLink}`;
+            } else {
+                alert("Masukkan link video terlebih dahulu!");
+            }
+        }
+    </script>
+
+    <!-- Script Iklan Adsterra Anda -->
+    <script async="async" data-cfasync="false" src="https://pl29428652.profitablecpmratenetwork.com/557341906a419e06b24b930f8ed87f2a/invoke.js"></script>
+
+</body>
+</html>
